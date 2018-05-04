@@ -16,17 +16,17 @@ suite() ->
     [{timetrap, {seconds, 10}}].
 
 %% Auxiliary function for checking properties and making the test fail if the property fails
-check_prop(Prop) ->
-    Result = proper:quickcheck(Prop),
+check_prop({Prop, Des}) ->
+    Result = proper:quickcheck(?MODULE:Prop()),
     if
-        Result == false -> ct:fail(proper:counterexample());
+        Result == false -> ct:fail({Prop, Des, proper:counterexample()});
         Result == true -> true;
-        true -> ct:fail(Result)
+        true -> ct:fail({Prop, Des, Result})
     end.
 
 unary_op_test(Config) ->
-    check_prop(prop_unary_op()),
-    check_prop(prop_unary_op2()).
+    check_prop({prop_unary_op, "Test case for unary_op/2"}),
+    check_prop({prop_unary_op2, "Test case for unary_op/3"}).
 
 prop_unary_op() ->
     ?FORALL({Op, Val}, {any(), any()},
@@ -37,8 +37,8 @@ prop_unary_op2() ->
     {unary_op, Line, Op, Val} == fn_ast:unary_op(Op, Line, Val)).
 
 op_test(Config) ->
-    check_prop(prop_op()),
-    check_prop(prop_op2()).
+    check_prop({prop_op, "Test case for op/3"}),
+    check_prop({prop_op2, "Test case for op/4"}).
 
 prop_op() ->
     ?FORALL({Op, Left, Right}, {atom(), any(), any()},
@@ -52,8 +52,8 @@ attr_test(Config) ->
     fn_ast:attr(1, "attr_test").
 
 kv_test(Config) ->
-    check_prop(prop_kv()),
-    check_prop(prop_kv2()).
+    check_prop({prop_kv, "Test case for kv/2"}),
+    check_prop({prop_kv2, "Test case for kv/3"}).
 
 prop_kv() ->
     ?FORALL({Key, Val}, {any(), any()},
@@ -64,8 +64,8 @@ prop_kv2() ->
     {kv, Line, Key, Val} == fn_ast:kv(Line, Key, Val)).
 
 tag_test(Config) ->
-    check_prop(prop_tag()),
-    check_prop(prop_tag2()).
+    check_prop({prop_tag, "Test case for tag/2"}),
+    check_prop({prop_tag2, "Test case for tag/3"}).
 
 prop_tag() ->
     ?FORALL({Tag, Val}, {string(), any()},
@@ -76,14 +76,14 @@ prop_tag2() ->
     {tag, Line, Tag, Val} == fn_ast:tag(Line, Tag, Val)).
 
 expr_test(Config) ->
-    check_prop(prop_expr()).
+    check_prop({prop_expr, "Test case for expr/3"}).
 
 prop_expr() ->
     ?FORALL({Line, Type, Args}, {pos_integer(), atom(), list()}, {expr, Line, Type, Args} == fn_ast:expr(Line, Type, Args)).
 
 call_mf_test(Config) ->
-    check_prop(prop_call_mf()),
-    check_prop(prop_call_mf2()).
+    check_prop({prop_call_mf, "Test case for call_mf/3"}),
+    check_prop({prop_call_mf2, "Test case for call_mf/4"}).
 
 prop_call_mf() ->
     ?FORALL({Mod, Fun, Args}, {string(), string(), list()},
@@ -94,8 +94,8 @@ prop_call_mf2() ->
     {expr, Line, call, {{Mod, Fun}, Args}} == fn_ast:call_mf(Line, Mod, Fun, Args)).
 
 call_f_test(Config) ->
-    check_prop(prop_call_f()),
-    check_prop(prop_call_f2()).
+    check_prop({prop_call_f, "Test case for call_f/2"}),
+    check_prop({prop_call_f2, "Test case for call_f/3"}).
 
 prop_call_f() ->
     ?FORALL({Fun, Args}, {string(), any()},
@@ -106,8 +106,8 @@ prop_call_f2() ->
     {expr, Line, call, {Fun, Args}} == fn_ast:call_f(Line, Fun, Args)).
 
 call_test(Config) ->
-    check_prop(prop_call()),
-    check_prop(prop_call2()).
+    check_prop({prop_call, "Test case for call/2"}),
+    check_prop({prop_call2, "Test case for call/3"}).
 
 prop_call() ->
     ?FORALL({MF, Args}, {string(), list()},
@@ -118,8 +118,8 @@ prop_call2() ->
     {expr, Line, call, {MF, Args}} == fn_ast:call(Line, MF, Args)).
 
 e_when_else_test(Config) ->
-    check_prop(prop_e_when_else()),
-    check_prop(prop_e_when_else2()).
+    check_prop({prop_e_when_else, "Test case for e_when_else/1"}),
+    check_prop({prop_e_when_else2, "Test case for e_when_else/2"}).
 
 prop_e_when_else() ->
     ?FORALL({Body}, {any()},
@@ -130,8 +130,8 @@ prop_e_when_else2() ->
     {welse, Line, Body} == fn_ast:e_when_else(Line, Body)).
 
 e_when_cond_test(Config) ->
-    check_prop(prop_e_when_cond()),
-    check_prop(prop_e_when_cond2()).
+    check_prop({prop_e_when_cond, "Test case for e_when_cond/2"}),
+    check_prop({prop_e_when_cond2, "Test case for e_when_cond/3"}).
 
 prop_e_when_cond() ->
     ?FORALL({Cond, Body}, {any(), any()},
@@ -142,8 +142,8 @@ prop_e_when_cond2() ->
     {wcond, Line, Cond, Body} == fn_ast:e_when_cond(Line, Cond, Body)).
 
 e_when_test(Config) ->
-    check_prop(prop_e_when()),
-    check_prop(prop_e_when2()).
+    check_prop({prop_e_when, "Test case for e_when/1"}),
+    check_prop({prop_e_when2, "Test case for e_when/2"}).
 
 prop_e_when() ->
     ?FORALL({Conds}, {list()},
@@ -154,14 +154,14 @@ prop_e_when2() ->
     {expr, Line, 'when', Conds} == fn_ast:e_when(Line, Conds)).
 
 e_case_else_test(Config) ->
-    check_prop(prop_e_case_else()).
+    check_prop({prop_e_case_else, "Test case for e_case_else/2"}).
 
 prop_e_case_else() ->
     ?FORALL({Line, Body}, {pos_integer(), any()}, {celse, Line, Body} == fn_ast:e_case_else(Line, Body)).
 
 e_case_match_test(Config) ->
-    check_prop(prop_e_case_match()),
-    check_prop(prop_e_case_match2()).
+    check_prop({prop_e_case_match, "Test case for e_case_match/3"}),
+    check_prop({prop_e_case_match2, "Test case for e_case_match/4"}).
 
 prop_e_case_match() ->
     ?FORALL({Line, Match, Body}, {pos_integer(), any(), any()},
@@ -172,20 +172,20 @@ prop_e_case_match2() ->
     {cmatch, Line, {Match, When, Body}} == fn_ast:e_case_match(Line, Match, When, Body)).
 
 e_case_test(Config) ->
-    check_prop(prop_e_case()).
+    check_prop({prop_e_case, "Test case for e_case/2"}).
 
 prop_e_case() ->
     ?FORALL({Line, Matches}, {pos_integer(), list()}, {expr, Line, 'case', Matches} == fn_ast:e_case(Line, Matches)).
 
 e_fn_test(Config) ->
-    check_prop(prop_e_fn()).
+    check_prop({prop_e_fn, "Test case for e_fn/2"}).
 
 prop_e_fn() ->
     ?FORALL({Line, Cases}, {pos_integer(), list()}, {expr, Line, fn, Cases} == fn_ast:e_fn(Line, Cases)).
 
 s_cons_test(Config) ->
-    check_prop(prop_s_cons()),
-    check_prop(prop_s_cons2()).
+    check_prop({prop_s_cons, "Test case for s_cons/2"}),
+    check_prop({prop_s_cons2, "Test case for s_cons/3"}).
 
 prop_s_cons() ->
     ?FORALL({Head, Tail}, {any(), list()},
@@ -196,8 +196,8 @@ prop_s_cons2() ->
     {seq, Line, cons, {Head, Tail}} == fn_ast:s_cons(Line, Head, Tail)).
 
 s_map_test(Config) ->
-    check_prop(prop_s_map()),
-    check_prop(prop_s_map2()).
+    check_prop({prop_s_map, "Test case for s_map/1"}),
+    check_prop({prop_s_map2, "Test case for s_map/2"}).
 
 prop_s_map() ->
     ?FORALL({Val}, {any()},
@@ -208,8 +208,8 @@ prop_s_map2() ->
     {seq, Line, map, Val} == fn_ast:s_map(Line, Val)).
 
 s_list_test(Config) ->
-    check_prop(prop_s_list()),
-    check_prop(prop_s_list2()).
+    check_prop({prop_s_list, "Test case for s_list/1"}),
+    check_prop({prop_s_list2, "Test case for s_list/2"}).
 
 prop_s_list() ->
     ?FORALL({Val}, {list()},
@@ -220,8 +220,8 @@ prop_s_list2() ->
     {seq, Line, list, Val} == fn_ast:s_list(Line, Val)).
 
 s_tuple_test(Config) ->
-    check_prop(prop_s_tuple()),
-    check_prop(prop_s_tuple2()).
+    check_prop({prop_s_tuple, "Test case for s_tuple/1"}),
+    check_prop({prop_s_tuple2, "Test case for s_tuple/2"}).
 
 prop_s_tuple() ->
     ?FORALL({Val}, {tuple()},
@@ -232,8 +232,8 @@ prop_s_tuple2() ->
     {seq, Line, tuple, Val} == fn_ast:s_tuple(Line, Val)).
 
 v_var_test(Config) ->
-    check_prop(prop_v_var()),
-    check_prop(prop_v_var2()).
+    check_prop({prop_v_var, "Test case for v_var/1"}),
+    check_prop({prop_v_var2, "Test case for v_var/2"}).
 
 prop_v_var() ->
     ?FORALL({Val}, {any()},
@@ -244,8 +244,8 @@ prop_v_var2() ->
     {val, Line, var, Val} == fn_ast:v_var(Line, Val)).
 
 v_fn_ref_test(Config) ->
-    check_prop(prop_v_fn_ref()),
-    check_prop(prop_v_fn_ref2()).
+    check_prop({prop_v_fn_ref, "Test case for v_fn_ref/3"}),
+    check_prop({prop_v_fn_ref2, "Test case for v_fn_ref/4"}).
 
 prop_v_fn_ref() ->
     ?FORALL({Line,FName, Arity}, {pos_integer(), string(), nat()},
@@ -256,8 +256,8 @@ prop_v_fn_ref2() ->
     {val, Line, fn_ref, {{ModName, FName}, Arity}} == fn_ast:v_fn_ref(Line, ModName, FName, Arity)).
 
 v_atom_test(Config) ->
-    check_prop(prop_v_atom()),
-    check_prop(prop_v_atom2()).
+    check_prop({prop_v_atom, "Test case for v_atom/1"}),
+    check_prop({prop_v_atom2, "Test case for v_atom/2"}).
 
 prop_v_atom() ->
     ?FORALL({Val}, {bool()},
@@ -268,8 +268,8 @@ prop_v_atom2() ->
     {val, Line, atom, Val} == fn_ast:v_atom(Line, Val)).
 
 v_bool_test(Config) ->
-    check_prop(prop_v_bool()),
-    check_prop(prop_v_bool2()).
+    check_prop({prop_v_bool, "Test case for v_bool/1"}),
+    check_prop({prop_v_bool2, "Test case for v_bool/2"}).
 
 prop_v_bool() ->
     ?FORALL({Val}, {bool()},
@@ -280,8 +280,8 @@ prop_v_bool2() ->
     {val, Line, boolean, Val} == fn_ast:v_bool(Line, Val)).
 
 v_str_test(Config) ->
-    check_prop(prop_v_str()),
-    check_prop(prop_v_str2()).
+    check_prop({prop_v_str, "Test case for v_str/1"}),
+    check_prop({prop_v_str2, "Test case for v_str/2"}).
 
 prop_v_str() ->
     ?FORALL({Val}, {string()},
@@ -292,8 +292,8 @@ prop_v_str2() ->
     {val, Line, string, Val} == fn_ast:v_str(Line, Val)).
 
 v_float_test(Config) ->
-    check_prop(prop_v_float()),
-    check_prop(prop_v_float2()).
+    check_prop({prop_v_float, "Test case for v_float/1"}),
+    check_prop({prop_v_float2, "Test case for v_float/2"}).
 
 prop_v_float() ->
     ?FORALL({Val}, {float()},
@@ -304,8 +304,8 @@ prop_v_float2() ->
     {val, Line, float, Val} == fn_ast:v_float(Line, Val)).
 
 v_int_test(Config) ->
-    check_prop(prop_v_int()),
-    check_prop(prop_v_int2()).
+    check_prop({prop_v_int, "Test case for v_int/1"}),
+    check_prop({prop_v_int2, "Test case for v_int/2"}).
 
 prop_v_int() ->
     ?FORALL({Val}, {integer()},
@@ -316,14 +316,14 @@ prop_v_int2() ->
     {val, Line, integer, Val} == fn_ast:v_int(Line, Val)).
 
 unary_ops_test(Config) ->
-    check_prop(prop_unary_pos()),
-    check_prop(prop_unary_pos2()),
-    check_prop(prop_unary_neg()),
-    check_prop(prop_unary_neg2()),
-    check_prop(prop_unary_bnot()),
-    check_prop(prop_unary_bnot2()),
-    check_prop(prop_unary_not()),
-    check_prop(prop_unary_not2()).
+    check_prop({prop_unary_pos, "Test case for op_pos/1"}),
+    check_prop({prop_unary_pos2, "Test case for op_pos/2"}),
+    check_prop({prop_unary_neg, "Test case for op_neg/1"}),
+    check_prop({prop_unary_neg2, "Test case for op_neg/2"}),
+    check_prop({prop_unary_bnot, "Test case for op_bnot/1"}),
+    check_prop({prop_unary_bnot2, "Test case for op_bnot/2"}),
+    check_prop({prop_unary_not, "Test case for op_not/1"}),
+    check_prop({prop_unary_not2, "Test case for op_not/2"}).
 
 prop_unary_pos() ->
     ?FORALL({Val}, {any()},
@@ -358,22 +358,22 @@ prop_unary_not2() ->
     {unary_op, Line, 'not', Val} == fn_ast:op_not(Line, Val)).
 
 comparison_ops_test(Config) ->
-    check_prop(prop_comparison_ops_ene()),
-    check_prop(prop_comparison_ops_ene2()),
-    check_prop(prop_comparison_ops_eeq()),
-    check_prop(prop_comparison_ops_eeq2()),
-    check_prop(prop_comparison_ops_ne()),
-    check_prop(prop_comparison_ops_ne2()),
-    check_prop(prop_comparison_ops_eq()),
-    check_prop(prop_comparison_ops_eq2()),
-    check_prop(prop_comparison_ops_ge()),
-    check_prop(prop_comparison_ops_ge2()),
-    check_prop(prop_comparison_ops_gt()),
-    check_prop(prop_comparison_ops_gt2()),
-    check_prop(prop_comparison_ops_le()),
-    check_prop(prop_comparison_ops_le2()),
-    check_prop(prop_comparison_ops_lt()),
-    check_prop(prop_comparison_ops_lt2()).
+    check_prop({prop_comparison_ops_ene, "Test case for op_ene/2"}),
+    check_prop({prop_comparison_ops_ene2, "Test case for op_ene/3"}),
+    check_prop({prop_comparison_ops_eeq, "Test case for op_eeq/2"}),
+    check_prop({prop_comparison_ops_eeq2, "Test case for op_eeq/3"}),
+    check_prop({prop_comparison_ops_ne, "Test case for op_ne/2"}),
+    check_prop({prop_comparison_ops_ne2, "Test case for op_ne/3"}),
+    check_prop({prop_comparison_ops_eq, "Test case for op_eq/2"}),
+    check_prop({prop_comparison_ops_eq2, "Test case for op_eq/3"}),
+    check_prop({prop_comparison_ops_ge, "Test case for op_ge/2"}),
+    check_prop({prop_comparison_ops_ge2, "Test case for op_ge/3"}),
+    check_prop({prop_comparison_ops_gt, "Test case for op_gt/2"}),
+    check_prop({prop_comparison_ops_gt2, "Test case for op_gt/3"}),
+    check_prop({prop_comparison_ops_le, "Test case for op_le/2"}),
+    check_prop({prop_comparison_ops_le2, "Test case for op_le/3"}),
+    check_prop({prop_comparison_ops_lt, "Test case for op_lt/2"}),
+    check_prop({prop_comparison_ops_lt2, "Test case for op_lt/3"}).
 
 prop_comparison_ops_ene() ->
     ?FORALL({Left, Right}, {any(), any()},
@@ -440,10 +440,10 @@ prop_comparison_ops_lt2() ->
     {op, Line, '<', Left, Right} == fn_ast:op_lt(Line, Left, Right)).
 
 ladd_lsub_test(Config) ->
-    check_prop(prop_ladd()),
-    check_prop(prop_ladd2()),
-    check_prop(prop_lsub()),
-    check_prop(prop_lsub2()).
+    check_prop({prop_ladd, "Test case for op_ladd/2"}),
+    check_prop({prop_ladd2, "Test case for op_ladd/3"}),
+    check_prop({prop_lsub, "Test case for op_lsub/2"}),
+    check_prop({prop_lsub2, "Test case for op_lsub/3"}).
 
 prop_ladd() ->
     ?FORALL({Left, Right}, {list(), list()},
@@ -462,16 +462,16 @@ prop_lsub2() ->
     {op, Line, '--', Left, Right} == fn_ast:op_lsub(Line, Left, Right)).
 
 binary_ops_test(Config) ->
-    check_prop(prop_binary_ops_shr()),
-    check_prop(prop_binary_ops_shr2()),
-    check_prop(prop_binary_ops_shl()),
-    check_prop(prop_binary_ops_shl2()),
-    check_prop(prop_binary_ops_bxor()),
-    check_prop(prop_binary_ops_bxor2()),
-    check_prop(prop_binary_ops_bor()),
-    check_prop(prop_binary_ops_bor2()),
-    check_prop(prop_binary_ops_band()),
-    check_prop(prop_binary_ops_band2()).
+    check_prop({prop_binary_ops_shr, "Test case for op_shr/2"}),
+    check_prop({prop_binary_ops_shr2, "Test case for op_shr/3"}),
+    check_prop({prop_binary_ops_shl, "Test case for op_shl/2"}),
+    check_prop({prop_binary_ops_shl2, "Test case for op_shl/3"}),
+    check_prop({prop_binary_ops_bxor, "Test case for op_bxor/2"}),
+    check_prop({prop_binary_ops_bxor2, "Test case for op_bxor/3"}),
+    check_prop({prop_binary_ops_bor, "Test case for op_bor/2"}),
+    check_prop({prop_binary_ops_bor2, "Test case for op_bor/3"}),
+    check_prop({prop_binary_ops_band, "Test case for op_band/2"}),
+    check_prop({prop_binary_ops_band2, "Test case for op_band/3"}).
 
 prop_binary_ops_shr() ->
     ?FORALL({Left, Right}, {binary(), binary()},
@@ -514,18 +514,18 @@ prop_binary_ops_band2() ->
     {op, Line, '&', Left, Right} == fn_ast:op_band(Line, Left, Right)).
 
 arithmetic_ops_test(Config) ->
-    check_prop(prop_arithmetic_ops_rem()),
-    check_prop(prop_arithmetic_ops_rem2()),
-    check_prop(prop_arithmetic_ops_idiv()),
-    check_prop(prop_arithmetic_ops_idiv2()),
-    check_prop(prop_arithmetic_ops_div()),
-    check_prop(prop_arithmetic_ops_div2()),
-    check_prop(prop_arithmetic_ops_mul()),
-    check_prop(prop_arithmetic_ops_mul2()),
-    check_prop(prop_arithmetic_ops_sub()),
-    check_prop(prop_arithmetic_ops_sub2()),
-    check_prop(prop_arithmetic_ops_add()),
-    check_prop(prop_arithmetic_ops_add2()).
+    check_prop({prop_arithmetic_ops_rem, "Test case for op_rem/2"}),
+    check_prop({prop_arithmetic_ops_rem2, "Test case for op_rem/3"}),
+    check_prop({prop_arithmetic_ops_idiv, "Test case for op_idiv/2"}),
+    check_prop({prop_arithmetic_ops_idiv2, "Test case for op_idiv/3"}),
+    check_prop({prop_arithmetic_ops_div, "Test case for op_div/2"}),
+    check_prop({prop_arithmetic_ops_div2, "Test case for op_div/3"}),
+    check_prop({prop_arithmetic_ops_mul, "Test case for op_mul/2"}),
+    check_prop({prop_arithmetic_ops_mul2, "Test case for op_mul/3"}),
+    check_prop({prop_arithmetic_ops_sub, "Test case for op_sub/2"}),
+    check_prop({prop_arithmetic_ops_sub2, "Test case for op_sub/3"}),
+    check_prop({prop_arithmetic_ops_add, "Test case for op_add/2"}),
+    check_prop({prop_arithmetic_ops_add2, "Test case for op_add/3"}).
 
 prop_arithmetic_ops_rem() ->
     ?FORALL({Left, Right}, {integer(), integer()},
@@ -576,16 +576,16 @@ prop_arithmetic_ops_add2() ->
     {op, Line, '+', Left, Right} == fn_ast:op_add(Line, Left, Right)).
 
 logic_ops_test(Config) ->
-    check_prop(prop_logic_ops_orr()),
-    check_prop(prop_logic_ops_orr2()),
-    check_prop(prop_logic_ops_andd()),
-    check_prop(prop_logic_ops_andd2()),
-    check_prop(prop_logic_ops_xor()),
-    check_prop(prop_logic_ops_xor2()),
-    check_prop(prop_logic_ops_or()),
-    check_prop(prop_logic_ops_or2()),
-    check_prop(prop_logic_ops_and()),
-    check_prop(prop_logic_ops_and2()).
+    check_prop({prop_logic_ops_orr, "Test case for op_orr/2"}),
+    check_prop({prop_logic_ops_orr2, "Test case for op_orr/3"}),
+    check_prop({prop_logic_ops_andd, "Test case for op_andd/2"}),
+    check_prop({prop_logic_ops_andd2, "Test case for op_andd/3"}),
+    check_prop({prop_logic_ops_xor, "Test case for op_xor/2"}),
+    check_prop({prop_logic_ops_xor2, "Test case for op_xor/3"}),
+    check_prop({prop_logic_ops_or, "Test case for op_or/2"}),
+    check_prop({prop_logic_ops_or2, "Test case for op_or/3"}),
+    check_prop({prop_logic_ops_and, "Test case for op_and/2"}),
+    check_prop({prop_logic_ops_and2, "Test case for op_and/3"}).
 
 prop_logic_ops_orr() ->
     ?FORALL({Left, Right}, {any(), any()},
@@ -628,8 +628,8 @@ prop_logic_ops_and2() ->
     {op, Line, 'and', Left, Right} == fn_ast:op_and(Line, Left, Right)).
 
 op_send_test(Config) ->
-    check_prop(prop_send()),
-    check_prop(prop_send2()).
+    check_prop({prop_send, "Test case for op_send/2"}),
+    check_prop({prop_send2, "Test case for op_send/3"}).
 
 prop_send() ->
     ?FORALL({Left, Right}, {atom(), atom()},
@@ -640,8 +640,8 @@ prop_send2() ->
     {op, Line, '!', Left, Right} == fn_ast:op_send(Line, Left, Right)).
 
 op_match_test(Config) ->
-    check_prop(prop_match()),
-    check_prop(prop_match2()).
+    check_prop({prop_match, "Test case for op_match/2"}),
+    check_prop({prop_match2, "Test case for op_match/3"}).
 
 prop_match() ->
     ?FORALL({Left, Right}, {any(), any()},
