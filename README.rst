@@ -1,4 +1,4 @@
-efene |BuildLink|_
+efene
 =====
 
 .. image:: https://travis-ci.org/EvaSuarezGarcia/efene.svg?branch=master
