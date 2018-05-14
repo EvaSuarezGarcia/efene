@@ -2,7 +2,6 @@
 -compile(export_all).
 -include_lib("proper/include/proper.hrl").
 
--export([prop_unary_op/0]).
 all() -> [unary_op_test, op_test, attr_test, kv_test, tag_test, expr_test, call_mf_test,
             call_f_test, call_test, e_when_else_test, e_when_cond_test, e_when_test,
             e_case_else_test, e_case_match_test, e_case_test, e_fn_test, s_cons_test,
