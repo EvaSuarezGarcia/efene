@@ -1,8 +1,8 @@
 efene |BuildLink|_
 =====
 
-.. |BuildLink| image:: https://travis-ci.org/lauramcastro/efene.svg?branch=master
-.. _BuildLink: https://travis-ci.org/lauramcastro/efene
+.. |BuildLink| image:: https://travis-ci.org/EvaSuarezGarcia/efene.svg?branch=master
+.. _BuildLink: https://travis-ci.org/EvaSuarezGarcia/efene
 
 Alternative syntax for the Erlang Programming Language focusing on simplicity,
 ease of use and programmer UX.

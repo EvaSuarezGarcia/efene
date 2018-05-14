@@ -3,6 +3,6 @@ otp_release: 20.2
 before_script:
     - git clone git://github.com/manopapad/proper.git
     - make
-    - mv proper /usr/lib/erlang/lib/proper
+    - sudo mv proper /usr/lib/erlang/lib/proper
     - export ERL_LIBS=/usr/lib/erlang/lib/proper
 script: rebar3 compile && rebar3 do ct,cover && rebar3 as test coveralls send
