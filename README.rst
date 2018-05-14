@@ -1,11 +1,11 @@
-efene
+efene |BuildLink|_ |CoverageLink|_
 =====
 
-.. image:: https://travis-ci.org/EvaSuarezGarcia/efene.svg?branch=master
-    :target: https://travis-ci.org/EvaSuarezGarcia/efene
+.. |BuildLink| image:: https://travis-ci.org/EvaSuarezGarcia/efene.svg?branch=master
+    _BuildLink: https://travis-ci.org/EvaSuarezGarcia/efene
 
-.. image:: https://coveralls.io/repos/github/EvaSuarezGarcia/efene/badge.svg?branch=master
-:target: https://coveralls.io/github/EvaSuarezGarcia/efene?branch=master
+.. |CoverageLink| image:: https://coveralls.io/repos/github/EvaSuarezGarcia/efene/badge.svg?branch=master
+    _CoverageLink: https://coveralls.io/github/EvaSuarezGarcia/efene?branch=master
 
 Alternative syntax for the Erlang Programming Language focusing on simplicity,
 ease of use and programmer UX.
